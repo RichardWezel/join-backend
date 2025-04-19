@@ -1,7 +1,19 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from join.models import CustomUser, Subtask, Task
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = CustomUser
         exclude = []
+
+class SubtaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subtask
+        fields = '__all__'
+
+class TaskSerializer(serializers.ModelSerializer):
+    subtasks = SubtaskSerializer(many=True, required=False)
+
+    class Meta:
+        model = Task
+        fields = '__all__'

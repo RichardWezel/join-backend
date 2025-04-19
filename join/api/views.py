@@ -1,11 +1,15 @@
 from rest_framework import generics
-from django.contrib.auth.models import User
-from .serializers import UserSerializer
+from join.models import CustomUser, Task, Subtask
+from .serializers import UserSerializer, TaskSerializer, SubtaskSerializer
 
 class UserListCreateView(generics.ListCreateAPIView):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
 
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+
+class TaskListCreateView(generics.ListCreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = TaskSerializer
