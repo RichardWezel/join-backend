@@ -1,7 +1,11 @@
-from django.urls import path
-from .views import UserListCreateView, TaskListCreateView
+from django.urls import path, include
+from .views import TaskViewSet, ContactViewSet
+from rest_framework import routers
+
+router = routers.SimpleRouter()
+router.register(r'tasks', TaskViewSet, basename='task')
+router.register(r'contacts', ContactViewSet, basename='contact')
 
 urlpatterns = [
-    path('users/', UserListCreateView.as_view(), name='user'),
-    path('tasks', TaskListCreateView.as_view(), name='task'),
+    path('', include(router.urls)),
 ]
