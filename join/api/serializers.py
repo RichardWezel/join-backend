@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from join.models import Subtask, Task, Contact, CurrentUser, User
+from join.models import Subtask, Task, Contact, CurrentUser, User, TaskStatus
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,3 +48,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
+class TaskStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaskStatus
+        fields = ['taskstatus']

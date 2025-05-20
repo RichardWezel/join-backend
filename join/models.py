@@ -44,3 +44,6 @@ class User(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.second_name}".strip()
+    
+class TaskStatus(models.Model):
+    taskstatus = models.BooleanField(default=False)

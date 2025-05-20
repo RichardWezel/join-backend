@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.generics import RetrieveUpdateAPIView
-from join.models import Contact, Task, Subtask, CurrentUser, User
-from .serializers import ContactSerializer, TaskSerializer, SubtaskSerializer, CurrentUserSerializer, UserSerializer
+from join.models import Contact, Task, Subtask, CurrentUser, User, TaskStatus
+from .serializers import ContactSerializer, TaskSerializer, SubtaskSerializer, CurrentUserSerializer, UserSerializer, TaskStatusSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,3 +24,7 @@ class CurrentUserViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+class TaskStatusViewSet(viewsets.ModelViewSet):
+    queryset = TaskStatus.objects.all()
+    serializer_class = TaskStatusSerializer
