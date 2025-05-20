@@ -13,10 +13,7 @@ class SubtaskSerializer(serializers.ModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
     subtasks = SubtaskSerializer(many=True, required=False)
-    contacts = contacts = serializers.PrimaryKeyRelatedField(
-    many=True,
-    queryset=Contact.objects.all()
-)
+    contacts = ContactSerializer(many=True, required=False)
     due_date = serializers.DateField(
         input_formats=['%d/%m/%y'],  # für Eingabe wie "11/07/24"
         format='%d/%m/%y'            # für Ausgabe wie "11/07/24"
