@@ -126,12 +126,12 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5500",  # z.B. wenn du VSCode Live Server nutzt
-    "http://127.0.0.1:5500",
-    "http://127.0.0.1:8000",
-    "http://localhost:8000"
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:59443",  # z.B. wenn du VSCode Live Server nutzt
+#     "http://127.0.0.1:59443",
+#     "http://127.0.0.1:8000",
+#     "http://localhost:8000"
+# ]
 
 CORS_ALLOW_ALL_ORIGINS = True
 

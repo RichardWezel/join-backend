@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from join.models import Subtask, Task, Contact
+from join.models import Subtask, Task, Contact, CurrentUser, User
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,10 +13,10 @@ class SubtaskSerializer(serializers.ModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
     subtasks = SubtaskSerializer(many=True, required=False)
-    contacts = serializers.PrimaryKeyRelatedField(
-        many=True,
-        queryset=Contact.objects.all()
-    )
+    contacts = contacts = serializers.PrimaryKeyRelatedField(
+    many=True,
+    queryset=Contact.objects.all()
+)
     due_date = serializers.DateField(
         input_formats=['%d/%m/%y'],  # für Eingabe wie "11/07/24"
         format='%d/%m/%y'            # für Ausgabe wie "11/07/24"
@@ -42,3 +42,12 @@ class TaskSerializer(serializers.ModelSerializer):
         
         return task
 
+class CurrentUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CurrentUser
+        fields = ['currentUserIndex']
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'

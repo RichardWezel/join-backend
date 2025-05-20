@@ -1,9 +1,11 @@
 from rest_framework import generics
-from join.models import Contact, Task, Subtask
-from .serializers import ContactSerializer, TaskSerializer, SubtaskSerializer
+from rest_framework.generics import RetrieveUpdateAPIView
+from join.models import Contact, Task, Subtask, CurrentUser, User
+from .serializers import ContactSerializer, TaskSerializer, SubtaskSerializer, CurrentUserSerializer, UserSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
+
 
 class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
@@ -15,4 +17,10 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
-    
+class CurrentUserViewSet(viewsets.ModelViewSet):
+    queryset = CurrentUser.objects.all()
+    serializer_class = CurrentUserSerializer
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

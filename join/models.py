@@ -30,3 +30,17 @@ class Task(models.Model):
     priority = models.CharField(max_length=50)
     status = models.CharField(max_length=50)
     contacts = models.ManyToManyField('Contact', related_name='tasks')
+
+class CurrentUser(models.Model):
+    currentUserIndex = models.IntegerField(default=999)
+
+class User(models.Model):
+    first_name = models.CharField(max_length=100, default="Guest")
+    second_name = models.CharField(max_length=100, blank=True)
+    color = models.CharField(max_length=7, default="#ff4646")
+    mail = models.EmailField(blank=True)
+    password = models.CharField(max_length=100, blank=True)
+    locked_in = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.first_name} {self.second_name}".strip()
