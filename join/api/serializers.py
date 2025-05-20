@@ -52,4 +52,4 @@ class UserSerializer(serializers.ModelSerializer):
 class TaskStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskStatus
-        fields = ['taskstatus']
+        fields = ['status']

@@ -46,4 +46,4 @@ class User(models.Model):
         return f"{self.first_name} {self.second_name}".strip()
     
 class TaskStatus(models.Model):
-    taskstatus = models.BooleanField(default=False)
+    status = models.BooleanField(default=False)
