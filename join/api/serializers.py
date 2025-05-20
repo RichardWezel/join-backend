@@ -9,7 +9,7 @@ class ContactSerializer(serializers.ModelSerializer):
 class SubtaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subtask
-        exclude = ['task']
+        fields = '__all__'
 
 class TaskSerializer(serializers.ModelSerializer):
     subtasks = SubtaskSerializer(many=True, required=False)
@@ -38,6 +38,33 @@ class TaskSerializer(serializers.ModelSerializer):
             Subtask.objects.create(task=task, **subtask_data)
         
         return task
+    
+    def update(self, instance, validated_data):
+        subtasks_data = validated_data.pop('subtasks', None)
+        contacts_data = validated_data.pop('contacts', None)
+
+        # Aktualisiere die Task-Instanz
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.category = validated_data.get('category', instance.category)
+        instance.due_date = validated_data.get('due_date', instance.due_date)
+        instance.priority = validated_data.get('priority', instance.priority)
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+
+        # Aktualisiere Kontakte
+        if contacts_data is not None:
+            instance.contacts.set(contacts_data)
+
+        # Aktualisiere Subtasks
+        if subtasks_data is not None:
+            for subtask in instance.subtasks.all():
+                subtask.delete()
+            for subtask_data in subtasks_data:
+                Subtask.objects.create(task=instance, **subtask_data)
+
+        return instance
+    
 
 class CurrentUserSerializer(serializers.ModelSerializer):
     class Meta:

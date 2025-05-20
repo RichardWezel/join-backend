@@ -26,3 +26,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class TaskStatusViewSet(viewsets.ModelViewSet):
     queryset = TaskStatus.objects.all()
     serializer_class = TaskStatusSerializer
+
+class SubtaskViewSet(viewsets.ModelViewSet):
+    queryset = Subtask.objects.all()
+    serializer_class = SubtaskSerializer
