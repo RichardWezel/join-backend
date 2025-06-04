@@ -20,8 +20,19 @@ class SubtaskSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
+    contact_ids = serializers.PrimaryKeyRelatedField(
+        source='contacts',       # <-- wichtig! Verbindung zu M2M-Feld
+        queryset=Contact.objects.all(),
+        many=True,
+        write_only=True          # <-- nur für POST/PUT sichtbar
+    )
+    contacts = ContactSerializer(
+        many=True,
+        read_only=True           # <-- nur für GET sichtbar
+    )
+
     subtasks = SubtaskSerializer(many=True, required=False)
-    contacts = ContactSerializer(many=True, required=False)
+
     due_date = serializers.DateField(
         input_formats=['%d/%m/%y'],
         format='%d/%m/%y'
@@ -29,7 +40,18 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ['id', 'title', 'description', 'category', 'due_date', 'priority', 'status', 'contacts', 'subtasks']
+        fields = [
+            'id',
+            'title',
+            'description',
+            'category',
+            'due_date',
+            'priority',
+            'status',
+            'contact_ids',  # <-- für Schreiben (POST/PUT)
+            'contacts',     # <-- für Lesen (GET)
+            'subtasks'
+        ]
 
     def create(self, validated_data):
         subtasks_data = validated_data.pop('subtasks', [])
