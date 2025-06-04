@@ -4,66 +4,78 @@ from join.models import Subtask, Task, Contact, CurrentUser, User, TaskStatus
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
-        exclude = []
+        fields = '__all__'
 
 class SubtaskSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
     class Meta:
         model = Subtask
-        fields = '__all__'
+        fields = ['id', 'name', 'done']
+
+    def create(self, validated_data):
+        # `task` wird manuell hinzugefügt
+        task = self.context.get('task')
+        return Subtask.objects.create(task=task, **validated_data)
+
 
 class TaskSerializer(serializers.ModelSerializer):
     subtasks = SubtaskSerializer(many=True, required=False)
     contacts = ContactSerializer(many=True, required=False)
     due_date = serializers.DateField(
-        input_formats=['%d/%m/%y'],  # für Eingabe wie "11/07/24"
-        format='%d/%m/%y'            # für Ausgabe wie "11/07/24"
+        input_formats=['%d/%m/%y'],
+        format='%d/%m/%y'
     )
-
 
     class Meta:
         model = Task
-        fields = [ 'id', 'title', 'description', 'category', 'due_date', 'priority', 'status', 'contacts', 'subtasks']
+        fields = ['id', 'title', 'description', 'category', 'due_date', 'priority', 'status', 'contacts', 'subtasks']
 
     def create(self, validated_data):
         subtasks_data = validated_data.pop('subtasks', [])
         contacts_data = validated_data.pop('contacts', [])
         
         task = Task.objects.create(**validated_data)
-        
-        # Kontakte zuordnen
         task.contacts.set(contacts_data)
-        
-        # Subtasks erstellen
+
+        # Subtasks erstellen und `task` mitgeben
         for subtask_data in subtasks_data:
-            Subtask.objects.create(task=task, **subtask_data)
-        
+            SubtaskSerializer(context={'task': task}).create(subtask_data)
         return task
-    
+
     def update(self, instance, validated_data):
         subtasks_data = validated_data.pop('subtasks', None)
         contacts_data = validated_data.pop('contacts', None)
 
-        # Aktualisiere die Task-Instanz
-        instance.title = validated_data.get('title', instance.title)
-        instance.description = validated_data.get('description', instance.description)
-        instance.category = validated_data.get('category', instance.category)
-        instance.due_date = validated_data.get('due_date', instance.due_date)
-        instance.priority = validated_data.get('priority', instance.priority)
-        instance.status = validated_data.get('status', instance.status)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
         instance.save()
 
-        # Aktualisiere Kontakte
         if contacts_data is not None:
             instance.contacts.set(contacts_data)
 
-        # Aktualisiere Subtasks
         if subtasks_data is not None:
-            for subtask in instance.subtasks.all():
-                subtask.delete()
+            existing_subtasks = {subtask.id: subtask for subtask in instance.subtasks.all()}
+
             for subtask_data in subtasks_data:
-                Subtask.objects.create(task=instance, **subtask_data)
+                subtask_id = subtask_data.get('id', None)
+                if subtask_id and subtask_id in existing_subtasks:
+                    # Update vorhandener Subtask
+                    subtask = existing_subtasks.pop(subtask_id)
+                    for attr, value in subtask_data.items():
+                        setattr(subtask, attr, value)
+                    subtask.save()
+                else:
+                    # Neuer Subtask
+                    Subtask.objects.create(task=instance, **subtask_data)
+
+            # Übrig gebliebene löschen
+            for subtask in existing_subtasks.values():
+                subtask.delete()
 
         return instance
+
+
     
 
 class CurrentUserSerializer(serializers.ModelSerializer):
